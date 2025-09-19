@@ -20,6 +20,8 @@ public class Main extends javax.swing.JFrame {
     public static ArrayList<String> productNames = new ArrayList<>();
     public static double[] prices = new double[100];
     public static HashMap<String,Integer> stockProducts = new HashMap<>();
+    public static double totalEarnings = 0;
+    public static int totalProductsSold = 0;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Main.class.getName());
 
@@ -84,6 +86,11 @@ public class Main extends javax.swing.JFrame {
         });
 
         getOutWithFinalTicketBtn.setText("Salir con ticket final");
+        getOutWithFinalTicketBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getOutWithFinalTicketBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -370,6 +377,13 @@ public class Main extends javax.swing.JFrame {
 
         JOptionPane.showMessageDialog(rootPane, scroll);
     }//GEN-LAST:event_lookProductForNameBtnActionPerformed
+
+    private void getOutWithFinalTicketBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getOutWithFinalTicketBtnActionPerformed
+
+        JOptionPane.showMessageDialog(rootPane, "El total de productos vendidos es: " + totalProductsSold + "\nEl total de ganancias es: $" + totalEarnings + " COP", "Ticket final", JOptionPane.INFORMATION_MESSAGE);
+
+        System.exit(0);
+    }//GEN-LAST:event_getOutWithFinalTicketBtnActionPerformed
 
     /**
      * @param args the command line arguments
