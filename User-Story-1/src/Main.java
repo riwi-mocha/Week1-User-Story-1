@@ -130,12 +130,24 @@ public class Main extends javax.swing.JFrame {
 
     private void addProductBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductBtnActionPerformed
         
-        String nameProduct = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre del producto", "Ventana", JOptionPane.QUESTION_MESSAGE); 
-        if(nameProduct == null) return;
+        String nameProduct;
+        boolean namePass = false;;
         
-        if(productNames.contains(nameProduct)){
-            JOptionPane.showMessageDialog(rootPane, "El producto con nombre " + nameProduct + "ya esta registrado.", "Error", HEIGHT);
-        }
+        do{
+            nameProduct = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre del producto", "Ventana", JOptionPane.QUESTION_MESSAGE); 
+            if(nameProduct == null) return;
+            if(nameProduct.isEmpty()){
+                JOptionPane.showMessageDialog(rootPane, "El nombre del producto no puede estar vacio.", "Error", JOptionPane.WARNING_MESSAGE);
+                nameProduct = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre del producto", "Ventana", JOptionPane.QUESTION_MESSAGE); 
+            }
+            if(productNames.contains(nameProduct)){
+                JOptionPane.showMessageDialog(rootPane, "El producto con nombre " + nameProduct + " ya esta registrado.", "Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                namePass = true;    
+            }
+        } while(!namePass);
+        
+        
 
         Double price = this.readDouble("Ingrese el precio del producto", "Ventana", JOptionPane.QUESTION_MESSAGE);            
         if(price == null) return;
@@ -149,6 +161,8 @@ public class Main extends javax.swing.JFrame {
 
     
     // Utilitary methods
+
+    //function that adds a product to the inventory
     public void addProduct(String nameProduct,double price, int stock){
         
         productNames.add(nameProduct);
@@ -160,6 +174,7 @@ public class Main extends javax.swing.JFrame {
         
     }
     
+    //function that expands the prices array
     public void expandPrices(){
         
         int currentLen = prices.length;
@@ -178,6 +193,7 @@ public class Main extends javax.swing.JFrame {
         
     }
     
+    //function that reads an integer and validates it
     public Integer readInteger(String message, String title, int typeOfMessage){
         boolean intPass = false;
         int number = 0;
@@ -206,6 +222,7 @@ public class Main extends javax.swing.JFrame {
         return number;
     }
     
+    //function that reads a double and validates it
     public Double readDouble(String message, String title, int typeOfMessage){
         boolean doublePass = false;
         double doubleNumber = 0;
@@ -245,12 +262,24 @@ public class Main extends javax.swing.JFrame {
         if(selectedProduct==null){
             return;
         }
+
+        boolean passQuantity = false;
         
         Integer quantity = readInteger("Ingrese la cantidad de producto que desea comprar","Ventana",JOptionPane.QUESTION_MESSAGE);
         if(quantity==null)return;
+
         
-        
-        
+        do{
+            quantity = readInteger("Ingrese la cantidad de producto que desea comprar","Ventana",JOptionPane.QUESTION_MESSAGE);
+            if(quantity==null)return;
+            if(quantity <= 0){
+                JOptionPane.showMessageDialog(rootPane, "La cantidad debe ser mayor a 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            } else {
+                passQuantity = true;
+            }
+        } while (!passQuantity);
+
+
         int quantityAvailableProduct = stockProducts.get(selectedProduct);
         
         if(quantity > quantityAvailableProduct){
