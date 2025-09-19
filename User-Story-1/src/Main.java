@@ -2,6 +2,9 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -74,6 +77,11 @@ public class Main extends javax.swing.JFrame {
         });
 
         lookProductForNameBtn.setText("Buscar producto por nombre");
+        lookProductForNameBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lookProductForNameBtnActionPerformed(evt);
+            }
+        });
 
         getOutWithFinalTicketBtn.setText("Salir con ticket final");
 
@@ -151,7 +159,7 @@ public class Main extends javax.swing.JFrame {
         double[] copyPrices = prices.clone();
         prices = new double[currentLen + 1];
         
-        for(int i = 0; i<prices.length; i++){
+        for(int i = 0; i<currentLen; i++){
             prices[i] = copyPrices[i];
         }
         
@@ -225,7 +233,7 @@ public class Main extends javax.swing.JFrame {
             return;
         }
         String[] options = productNames.toArray(new String[0]);
-        String selectedProduct = (String) JOptionPane.showInputDialog(rootPane, "Seleccione una opcion", "Ventana", JOptionPane.PLAIN_MESSAGE, null,options, options[0]);
+        String selectedProduct = (String) JOptionPane.showInputDialog(rootPane, "Seleccione el producto que desea comprar: ", "Ventana", JOptionPane.PLAIN_MESSAGE, null,options, options[0]);
         
         if(selectedProduct==null){
             return;
@@ -244,21 +252,48 @@ public class Main extends javax.swing.JFrame {
         }
         
         
-        double priceProduct = prices[indexOfProduct];
-        
         int indexOfProduct = indexOfName(selectedProduct);
-        
-        int buyOption = JOptionPane.showConfirmDialog(rootPane, "¿Esta seguro que desea comprar " + quantity + " cantidad del producto " + selectedProduct + " con un precio total de $" + priceProduct + " COP ?", "Confirmacion", JOptionPane.QUESTION_MESSAGE);
-        
+        double priceProduct = prices[indexOfProduct];
+        double totalPrice = priceProduct*quantity;
+
+        int buyOption = JOptionPane.showConfirmDialog(rootPane, "¿Esta seguro que desea comprar " + quantity + " cantidad del producto " + selectedProduct + " con un precio total de $" + totalPrice + " COP ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+
         if(buyOption == 0){
-            JOptionPane.showMessageDialog(rootPane, "Haz realizado la compra exitosamente\nproducto: " + selectedProduct + "\ncantidad: " + quantity + "\nprecio: $" + priceProduct + " COP", "Exito", JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(rootPane, "Haz realizado la compra exitosamente\nproducto: " + selectedProduct + "\ncantidad: " + quantity + "\nprecio: $" + totalPrice + " COP", "Exito", JOptionPane.PLAIN_MESSAGE);
         } else {
             return;
         }
+
+
+        int newStock = quantityAvailableProduct - quantity;
+        stockProducts.put(selectedProduct, newStock);
     }//GEN-LAST:event_buyProductBtnActionPerformed
 
     private void listInventoryBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listInventoryBtnActionPerformed
-        // TODO add your handling code here:
+         if(productNames.isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "No hay productos registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("Producto");
+        model.addColumn("Precio");
+        model.addColumn("Stock");
+
+        for(int i = 0; i < productNames.size(); i++){
+            String name = productNames.get(i);
+            double price = prices[i];
+            int stock = stockProducts.get(name);
+
+            model.addRow(new Object[]{name,price,stock});
+        }
+
+        JTable table = new JTable(model);
+
+        JScrollPane scroll = new JScrollPane(table);
+
+        JOptionPane.showMessageDialog(rootPane, scroll);
     }//GEN-LAST:event_listInventoryBtnActionPerformed
 
     private void reportsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportsBtnActionPerformed
@@ -293,6 +328,48 @@ public class Main extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(rootPane, "Producto mas caro\nproducto: " + highestPriceName + "\n precio: $" + highestPrice + " COP\n\n Producto mas barato\nproducto: " + lowestPriceName + "\nprecio: $" + lowestPrice + " COP", "Reporte", JOptionPane.INFORMATION_MESSAGE);
 
     }//GEN-LAST:event_reportsBtnActionPerformed
+
+    private void lookProductForNameBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lookProductForNameBtnActionPerformed
+       if(productNames.isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "No hay productos registrados", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String nameProduct = JOptionPane.showInputDialog(rootPane, "Ingrese el nombre del producto que desea buscar", "Ventana", JOptionPane.QUESTION_MESSAGE);
+        if(nameProduct == null) return;
+
+         if(productNames.isEmpty()){
+            JOptionPane.showMessageDialog(rootPane, "No hay productos registrados.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("Producto");
+        model.addColumn("Precio");
+        model.addColumn("Stock");
+
+        for(int i = 0; i < productNames.size(); i++){
+            String name = productNames.get(i);
+            if(name.contains(nameProduct)){
+                double price = prices[i];
+                int stock = stockProducts.get(name);
+
+                model.addRow(new Object[]{name,price,stock});
+            }
+            
+        }
+        if(model.getRowCount() == 0){
+            JOptionPane.showMessageDialog(rootPane, "No se encontraron productos con el nombre " + nameProduct, "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        JTable table = new JTable(model);
+
+        JScrollPane scroll = new JScrollPane(table);
+
+        JOptionPane.showMessageDialog(rootPane, scroll);
+    }//GEN-LAST:event_lookProductForNameBtnActionPerformed
 
     /**
      * @param args the command line arguments
