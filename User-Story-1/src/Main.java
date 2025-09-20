@@ -292,6 +292,9 @@ public class Main extends javax.swing.JFrame {
         double priceProduct = prices[indexOfProduct];
         double totalPrice = priceProduct*quantity;
 
+        totalEarnings += totalPrice;
+        totalProductsSold += quantity;
+
         int buyOption = JOptionPane.showConfirmDialog(rootPane, "¿Esta seguro que desea comprar " + quantity + " cantidad del producto " + selectedProduct + " con un precio total de $" + totalPrice + " COP ?", "Confirmacion", JOptionPane.YES_NO_OPTION);
 
         if(buyOption == 0){
